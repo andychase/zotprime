@@ -1,4 +1,3 @@
-
 FROM node:16-alpine as intermediate
 ARG ZOTPRIME_VERSION=2
 
@@ -55,7 +54,7 @@ RUN set -eux; \
 WORKDIR /usr/src/app/client/zotero-client
 #RUN set -eux; \
 #     npx browserslist@latest --update-db --legacy-peer-deps
-ARG MLW=l
+ARG MLW=w
 RUN set -eux; \
     npm install --legacy-peer-deps
 RUN set -eux; \
@@ -68,5 +67,7 @@ RUN set -eux; \
 RUN set -eux; \
     ./scripts/dir_build -p $MLW
 
+RUN tar cjf /usr/src/app/client/zotero-standalone-build/out.tar.bz2 /usr/src/app/client/zotero-standalone-build/staging
+
 FROM scratch AS export-stage
-COPY --from=intermediate /usr/src/app/client/zotero-standalone-build/staging .
+COPY --from=intermediate /usr/src/app/client/zotero-standalone-build/out.tar.bz2 .
